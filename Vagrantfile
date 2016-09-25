@@ -38,6 +38,7 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
+   config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -64,8 +65,30 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
+
+  # Shel script to automate system update, install epel-release, and ansible.
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum update
+    sudo yum -y install epel-release
+    sudo yum -y install ansible
+  SHELL
+
+  # Shell script to install Guest VirtualBox Guest Additions plug-in.
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum install wget
+    sudo wget http://download.virtualbox.org/virtualbox/4.3.8/VBoxGuestAdditions_4.3.8.iso
+    sudo mkdir /media/VBoxGuestAdditions
+    sudo mount -o loop,ro VBoxGuestAdditions_4.3.8.iso /media/VBoxGuestAdditions
+    sudo sh /media/VBoxGuestAdditions/VBoxLinuxAdditions.run
+    sudo rm VBoxGuestAdditions_4.3.8.iso
+    sudo umount /media/VBoxGuestAdditions
+    sudo rmdir /media/VBoxGuestAdditions
+  SHELL
+
+  # Run Ansible from the Vagrant Host.
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "site.yml"
+  end
+
 end
+
