@@ -1,0 +1,4 @@
+---
+# tasks file for test-role
+- name: Install Fake Config
+  template: src=fake.config.j2 dest=/tmp/fake.config mode=0644
