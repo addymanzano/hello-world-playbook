@@ -1,2 +1,5 @@
 ---
 # handlers file for test-role
+- name: Restart Fake Service
+  debug: msg="Normally we would use the service module here -- service name=fake-service state=restarted enabled=yes"
+
