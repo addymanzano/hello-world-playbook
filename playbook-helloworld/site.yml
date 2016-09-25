@@ -1,0 +1,15 @@
+
+---
+# site.yml - a simple playbook
+
+# run on all hosts
+- hosts: all
+
+  vars:
+  - message: "hello, world!"
+
+  tasks:
+
+  # debug mode prints output to the screen
+  - name: Hello World
+    debug: msg="{{ message }}"
